@@ -61,3 +61,38 @@ document.getElementById('login-form').addEventListener('submit', (e) => {
 });
 
 document.getElementById('logout-button').addEventListener('click', logout);
+const API_URL = "https://your-api-gateway-endpoint.com"; // Replace with your API Gateway endpoint
+
+document.getElementById("group-form").addEventListener("submit", async (event) => {
+  event.preventDefault(); // Prevent page refresh
+
+  // Get form values
+  const groupName = document.getElementById("group-name").value;
+  const groupId = document.getElementById("group-id").value;
+
+  try {
+    // Send data to the backend
+    const response = await fetch(`${API_URL}/groups`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        groupName: groupName,
+        groupId: groupId,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      alert("Group created successfully!");
+      fetchGroups(); // Refresh the group list
+    } else {
+      alert(`Error: ${result.message}`);
+    }
+  } catch (error) {
+    console.error("Error creating group:", error);
+    alert("An error occurred while creating the group.");
+  }
+});
