@@ -7,55 +7,29 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1 id="welcome">Welcome to SyncSpace</h1>
-
-  <!-- Sign-Up Form -->
-  <h2>Sign Up</h2>
-  <form id="signup-form">
-    <input type="email" id="signup-email" placeholder="Email" required />
-    <input type="password" id="signup-password" placeholder="Password" required />
-    <button type="submit">Sign Up</button>
-  </form>
-  <div id="signup-message"></div>
-
-  <!-- Login Form -->
-  <h2>Log In</h2>
-  <form id="login-form">
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="password" id="password" placeholder="Password" required />
-    <button type="submit">Log In</button>
-  </form>
-  <div id="message"></div>
-
-  <!-- Logout Button -->
-  <button id="logout-button" style="display: none;">Log Out</button>
-
-  <script src="script.js" type="module"></script>
-</body>
-</html>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SyncSpace</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <h1>SyncSpace</h1>
+  <h1>Welcome to SyncSpace</h1>
 
   <!-- Group Creation Form -->
-  <h2>Create a New Group</h2>
-  <form id="group-form">
-    <input type="text" id="group-name" placeholder="Group Name" required />
-    <input type="text" id="group-id" placeholder="Group ID" required />
-    <button type="submit">Create Group</button>
-  </form>
+  <section>
+    <h2>Create a New Group</h2>
+    <form id="group-form">
+      <label for="group-name">Group Name:</label>
+      <input type="text" id="group-name" placeholder="Enter Group Name" required />
+      <br />
+      <label for="group-id">Group ID:</label>
+      <input type="text" id="group-id" placeholder="Enter Group ID" required />
+      <br />
+      <button type="submit">Create Group</button>
+    </form>
+  </section>
 
   <!-- Group List -->
-  <h2>Your Groups</h2>
-  <ul id="group-list"></ul>
+  <section>
+    <h2>Your Groups</h2>
+    <ul id="group-list">
+      <!-- Groups will be dynamically inserted here -->
+    </ul>
+  </section>
 
   <script src="script.js"></script>
 </body>
