@@ -1,77 +1,16 @@
-import Amplify, { Auth } from 'aws-amplify';
-import awsconfig from './aws-exports.js'; // Ensure this file exists in your GitHub repo
+// Replace this with your actual API Gateway endpoint
+const API_URL = "https://your-api-gateway-endpoint.com"; 
 
-Amplify.configure(awsconfig);
-
-// Sign-Up Function
-const signup = async () => {
-  const email = document.getElementById('signup-email').value;
-  const password = document.getElementById('signup-password').value;
-
-  try {
-    const user = await Auth.signUp({
-      username: email,
-      password: password,
-    });
-    document.getElementById('signup-message').innerText = "Sign-up successful! Please verify your email.";
-    console.log('User signed up:', user);
-  } catch (error) {
-    document.getElementById('signup-message').innerText = `Error signing up: ${error.message}`;
-    console.error('Sign-up error:', error);
-  }
-};
-
-// Login Function
-const signin = async () => {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-
-  try {
-    const user = await Auth.signIn(email, password);
-    document.getElementById('message').innerText = `Welcome, ${user.username}!`;
-    document.getElementById('logout-button').style.display = "block";
-    console.log('User signed in:', user);
-  } catch (error) {
-    document.getElementById('message').innerText = `Error logging in: ${error.message}`;
-    console.error('Sign-in error:', error);
-  }
-};
-
-// Logout Function
-const logout = async () => {
-  try {
-    await Auth.signOut();
-    document.getElementById('message').innerText = "You have been logged out.";
-    document.getElementById('logout-button').style.display = "none";
-    console.log('User logged out.');
-  } catch (error) {
-    console.error('Logout error:', error);
-  }
-};
-
-// Event Listeners
-document.getElementById('signup-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  signup();
-});
-
-document.getElementById('login-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  signin();
-});
-
-document.getElementById('logout-button').addEventListener('click', logout);
-const API_URL = "https://your-api-gateway-endpoint.com"; // Replace with your API Gateway endpoint
-
+// Event listener for the group creation form
 document.getElementById("group-form").addEventListener("submit", async (event) => {
   event.preventDefault(); // Prevent page refresh
 
-  // Get form values
+  // Get form input values
   const groupName = document.getElementById("group-name").value;
   const groupId = document.getElementById("group-id").value;
 
   try {
-    // Send data to the backend
+    // Send a POST request to create a new group
     const response = await fetch(`${API_URL}/groups`, {
       method: "POST",
       headers: {
@@ -87,7 +26,7 @@ document.getElementById("group-form").addEventListener("submit", async (event) =
 
     if (response.ok) {
       alert("Group created successfully!");
-      fetchGroups(); // Refresh the group list
+      fetchGroups(); // Refresh the group list after creation
     } else {
       alert(`Error: ${result.message}`);
     }
@@ -96,3 +35,38 @@ document.getElementById("group-form").addEventListener("submit", async (event) =
     alert("An error occurred while creating the group.");
   }
 });
+
+// Function to fetch and display groups
+async function fetchGroups() {
+  try {
+    // Send a GET request to retrieve all groups
+    const response = await fetch(`${API_URL}/groups`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      const groupList = document.getElementById("group-list");
+      groupList.innerHTML = ""; // Clear the existing list
+
+      // Loop through the groups and display them
+      result.groups.forEach((group) => {
+        const listItem = document.createElement("li");
+        listItem.textContent = `${group.groupName} (${group.groupId})`;
+        groupList.appendChild(listItem);
+      });
+    } else {
+      console.error(`Error fetching groups: ${result.message}`);
+    }
+  } catch (error) {
+    console.error("Error fetching groups:", error);
+  }
+}
+
+// Fetch and display groups when the page loads
+fetchGroups();
+
