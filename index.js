@@ -1,39 +1,22 @@
-// Generate or retrieve temporary user ID
-function getTempUserId() {
-  let tempUserId = localStorage.getItem('tempUserId');
-  if (!tempUserId) {
-    tempUserId = generateUUID();
-    localStorage.setItem('tempUserId', tempUserId);
-  }
-  return tempUserId;
-}
-
-// Generate a UUID
-function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = (Math.random() * 16) | 0,
-      v = c === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
-
-// Redirect to Create Group Page
-document.getElementById('start-button')?.addEventListener('click', () => {
-  const userId = getTempUserId();
-  console.log(`Temporary User ID: ${userId}`);
-  window.location.href = 'create-group.html';
-});
-
+// Event listener for the "Get Started" button
 document.getElementById('get-started-btn').addEventListener('click', async () => {
   try {
+    // Fetch user ID from localStorage
     const userId = localStorage.getItem('tempUserId');
+
+    // Make a GET request to fetch groups (replace with your actual API URL)
     const response = await fetch('https://<your-api-url>/groups', {
       method: 'GET',
-      headers: { 'Content-Type': 'application/json', 'Authorization': userId },
+      headers: { 
+        'Content-Type': 'application/json', 
+        'Authorization': userId // Include the user ID in the request
+      },
     });
+
+    // Parse the JSON response
     const groups = await response.json();
 
-    // Populate group section
+    // Populate the group section with group data
     const groupSection = document.getElementById('group-section');
     groupSection.innerHTML = groups.data.map(group => `
       <div>
@@ -42,15 +25,19 @@ document.getElementById('get-started-btn').addEventListener('click', async () =>
       </div>
     `).join('');
     
-    // Show group section
-    document.getElementById('signup-section').style.display = 'none';
+    // Hide the "Get Started" section and show the group section
+    document.getElementById('get-started-section').style.display = 'none';
     groupSection.style.display = 'block';
+
   } catch (error) {
     console.error('Failed to load groups:', error);
   }
 });
 
+// Function to handle entering a group (you can implement this logic as needed)
+function enterGroup(groupId) {
+  console.log('Entering group:', groupId);
+  // Add logic to navigate to the group page or display its content
+}
 
-
-});
 
