@@ -1,145 +1,132 @@
-const API_URL = "https://your-api-gateway-endpoint.com"; // Replace with your API Gateway endpoint
+let webSocket;
 
-// Switch between pages
-const showSection = (sectionId) => {
-  document.querySelectorAll("section").forEach((section) => {
-    section.style.display = "none";
-  });
-  document.getElementById(sectionId).style.display = "block";
-};
+// Backend API URLs
+const API_BASE_URL = "https://<your-http-api-endpoint>"; // Replace with HTTP API Gateway URL
+const WEBSOCKET_URL = "wss://<your-websocket-endpoint>/production"; // Replace with WebSocket API Gateway URL
 
-// Event: Go to Sign-Up
-document.getElementById("go-to-signup").addEventListener("click", () => {
-  showSection("signup-section");
-});
-
-// Event: Go to Login
-document.getElementById("go-to-login").addEventListener("click", () => {
-  showSection("login-section");
-});
-
-// Login Logic
-document.getElementById("login-form").addEventListener("submit", async (event) => {
-  event.preventDefault();
-
-  const email = document.getElementById("login-email").value;
-  const password = document.getElementById("login-password").value;
+// Authentication
+async function login() {
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
 
   try {
-    const response = await fetch(`${API_URL}/login`, {
+    const response = await fetch(`${API_BASE_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
 
-    const result = await response.json();
-
+    const data = await response.json();
     if (response.ok) {
       alert("Login successful!");
-      localStorage.setItem("token", result.token); // Store token for future use
-      showSection("group-section"); // Redirect to group page
-      fetchGroups(); // Load groups
+      showGroupPage();
     } else {
-      document.getElementById("login-error").innerText = result.message;
+      alert(data.message || "Login failed");
     }
   } catch (error) {
-    console.error("Login error:", error);
-    document.getElementById("login-error").innerText = "Login failed.";
-  }
-});
-
-// Sign-Up Logic
-document.getElementById("signup-form").addEventListener("submit", async (event) => {
-  event.preventDefault();
-
-  const email = document.getElementById("signup-email").value;
-  const password = document.getElementById("signup-password").value;
-
-  try {
-    const response = await fetch(`${API_URL}/signup`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      alert("Sign-up successful! Please log in.");
-      showSection("login-section");
-    } else {
-      document.getElementById("signup-error").innerText = result.message;
-    }
-  } catch (error) {
-    console.error("Sign-up error:", error);
-    document.getElementById("signup-error").innerText = "Sign-up failed.";
-  }
-});
-
-// Group Creation Logic
-document.getElementById("group-form").addEventListener("submit", async (event) => {
-  event.preventDefault();
-
-  const groupName = document.getElementById("group-name").value;
-  const groupId = document.getElementById("group-id").value;
-
-  try {
-    const response = await fetch(`${API_URL}/groups`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({ groupName, groupId }),
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      alert("Group created successfully!");
-      fetchGroups(); // Refresh group list
-    } else {
-      document.getElementById("group-error").innerText = result.message;
-    }
-  } catch (error) {
-    console.error("Group creation error:", error);
-    document.getElementById("group-error").innerText = "Group creation failed.";
-  }
-});
-
-// Fetch Groups
-async function fetchGroups() {
-  try {
-    const response = await fetch(`${API_URL}/groups`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      const groupList = document.getElementById("group-list");
-      groupList.innerHTML = ""; // Clear previous groups
-
-      result.groups.forEach((group) => {
-        const listItem = document.createElement("li");
-        listItem.textContent = `${group.groupName} (${group.groupId})`;
-        groupList.appendChild(listItem);
-      });
-    } else {
-      console.error("Error fetching groups:", result.message);
-    }
-  } catch (error) {
-    console.error("Error fetching groups:", error);
+    console.error("Error logging in:", error);
   }
 }
 
-// Logout Logic
-document.getElementById("logout-button").addEventListener("click", () => {
-  localStorage.removeItem("token");
-  alert("Logged out successfully!");
-  showSection("login-section");
-});
+async function signup() {
+  const email = document.getElementById("signupEmail").value;
+  const password = document.getElementById("signupPassword").value;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      alert("Signup successful! Please log in.");
+    } else {
+      alert(data.message || "Signup failed");
+    }
+  } catch (error) {
+    console.error("Error signing up:", error);
+  }
+}
+
+// Group Management
+async function createGroup() {
+  const groupName = document.getElementById("groupName").value;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/groups`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: groupName }),
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      alert("Group created successfully!");
+      enterGroup(groupName);
+    } else {
+      alert(data.message || "Group creation failed");
+    }
+  } catch (error) {
+    console.error("Error creating group:", error);
+  }
+}
+
+function enterGroup(groupName) {
+  alert(`Entering group: ${groupName}`);
+  document.getElementById("groupContainer").style.display = "none";
+  document.getElementById("chatContainer").style.display = "block";
+  connectWebSocket();
+}
+
+// WebSocket Integration
+function connectWebSocket() {
+  webSocket = new WebSocket(WEBSOCKET_URL);
+
+  webSocket.onopen = () => {
+    console.log("WebSocket connected");
+  };
+
+  webSocket.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+    displayMessage(message.body);
+  };
+
+  webSocket.onclose = () => {
+    console.log("WebSocket disconnected");
+  };
+
+  webSocket.onerror = (error) => {
+    console.error("WebSocket error:", error);
+  };
+}
+
+function sendMessage() {
+  const message = document.getElementById("messageInput").value;
+
+  if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+    const payload = {
+      action: "sendMessage",
+      message,
+    };
+
+    webSocket.send(JSON.stringify(payload));
+    console.log("Message sent:", payload);
+  } else {
+    console.error("WebSocket is not connected");
+  }
+}
+
+function displayMessage(message) {
+  const messageContainer = document.getElementById("messages");
+  const messageElement = document.createElement("div");
+  messageElement.textContent = message;
+  messageContainer.appendChild(messageElement);
+}
+
+// Navigation
+function showGroupPage() {
+  document.getElementById("authContainer").style.display = "none";
+  document.getElementById("groupContainer").style.display = "block";
+}
