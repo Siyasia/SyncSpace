@@ -1,22 +1,21 @@
-// Event listener for the "Get Started" button
+// Set the WebSocket API URL and HTTP API URL
+const websocketUrl = 'wss://kecqoiszr7.execute-api.us-east-1.amazonaws.com/prod'; // WebSocket URL
+const httpApiUrl = 'https://9ywal030f2.execute-api.us-east-1.amazonaws.com/prod'; // HTTP API URL
+
+// Mock User ID (used for testing)
+const mockUserId = 'mockUser123'; // Use a temporary mock user ID for testing
+
+// Get Started Button - Fetch groups using the mock user ID
 document.getElementById('get-started-btn').addEventListener('click', async () => {
   try {
-    // Fetch user ID from localStorage
-    const userId = localStorage.getItem('tempUserId');
-
-    // Make a GET request to fetch groups (replace with your actual API URL)
-    const response = await fetch('https://<your-api-url>/groups', {
+    const userId = mockUserId; // Use the mock user ID here
+    const response = await fetch(`${httpApiUrl}/groups`, {
       method: 'GET',
-      headers: { 
-        'Content-Type': 'application/json', 
-        'Authorization': userId // Include the user ID in the request
-      },
+      headers: { 'Content-Type': 'application/json', 'Authorization': userId },
     });
-
-    // Parse the JSON response
     const groups = await response.json();
 
-    // Populate the group section with group data
+    // Populate group section
     const groupSection = document.getElementById('group-section');
     groupSection.innerHTML = groups.data.map(group => `
       <div>
@@ -24,20 +23,30 @@ document.getElementById('get-started-btn').addEventListener('click', async () =>
         <button onclick="enterGroup('${group.id}')">Enter Group</button>
       </div>
     `).join('');
-    
-    // Hide the "Get Started" section and show the group section
-    document.getElementById('get-started-section').style.display = 'none';
-    groupSection.style.display = 'block';
 
+    // Show group section
+    document.getElementById('signup-section').style.display = 'none';
+    groupSection.style.display = 'block';
   } catch (error) {
     console.error('Failed to load groups:', error);
   }
 });
 
-// Function to handle entering a group (you can implement this logic as needed)
+// Function to handle entering the group
 function enterGroup(groupId) {
-  console.log('Entering group:', groupId);
-  // Add logic to navigate to the group page or display its content
+  // Logic to enter a specific group room (use WebSocket to send/receive messages)
+  const socket = new WebSocket(websocketUrl);
+
+  socket.onopen = () => {
+    console.log(`Connected to group ${groupId}`);
+    socket.send(JSON.stringify({ action: 'join', groupId }));
+  };
+
+  socket.onmessage = (event) => {
+    console.log('Message from server:', event.data);
+  };
+
+  socket.onclose = () => {
+    console.log('Disconnected from group');
+  };
 }
-
-
