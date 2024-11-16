@@ -4,39 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SyncSpace</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <div id="authContainer">
-    <h1>Welcome to SyncSpace</h1>
-    <div id="loginForm">
-      <h2>Login</h2>
-      <input type="text" id="loginEmail" placeholder="Email" />
-      <input type="password" id="loginPassword" placeholder="Password" />
-      <button onclick="login()">Login</button>
-    </div>
-    <div id="signupForm">
-      <h2>Sign Up</h2>
-      <input type="text" id="signupEmail" placeholder="Email" />
-      <input type="password" id="signupPassword" placeholder="Password" />
-      <button onclick="signup()">Sign Up</button>
-    </div>
-  </div>
-
-  <div id="groupContainer" style="display: none;">
-    <h2>Create a Group</h2>
-    <input type="text" id="groupName" placeholder="Group Name" />
-    <button onclick="createGroup()">Create Group</button>
-    <div id="groupList"></div>
-  </div>
-
-  <div id="chatContainer" style="display: none;">
-    <h2>Group Chat</h2>
-    <div id="messages"></div>
-    <input type="text" id="messageInput" placeholder="Enter your message" />
-    <button onclick="sendMessage()">Send Message</button>
-  </div>
-
-  <script src="script.js"></script>
+  <h1>Welcome to SyncSpace</h1>
+  <button id="start-button">Get Started</button>
+  <script src="js/index.js"></script>
 </body>
 </html>
+
