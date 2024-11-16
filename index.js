@@ -23,3 +23,11 @@ document.getElementById('start-button')?.addEventListener('click', () => {
   console.log(`Temporary User ID: ${userId}`);
   window.location.href = 'create-group.html';
 });
+
+// event listner
+document.getElementById('get-started-btn').addEventListener('click', () => {
+  // Redirect to group creation or list page
+  document.getElementById('signup-section').style.display = 'none';
+  document.getElementById('group-section').style.display = 'block';
+});
+
