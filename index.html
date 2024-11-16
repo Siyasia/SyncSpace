@@ -7,29 +7,35 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Welcome to SyncSpace</h1>
+  <div id="authContainer">
+    <h1>Welcome to SyncSpace</h1>
+    <div id="loginForm">
+      <h2>Login</h2>
+      <input type="text" id="loginEmail" placeholder="Email" />
+      <input type="password" id="loginPassword" placeholder="Password" />
+      <button onclick="login()">Login</button>
+    </div>
+    <div id="signupForm">
+      <h2>Sign Up</h2>
+      <input type="text" id="signupEmail" placeholder="Email" />
+      <input type="password" id="signupPassword" placeholder="Password" />
+      <button onclick="signup()">Sign Up</button>
+    </div>
+  </div>
 
-  <!-- Group Creation Form -->
-  <section>
-    <h2>Create a New Group</h2>
-    <form id="group-form">
-      <label for="group-name">Group Name:</label>
-      <input type="text" id="group-name" placeholder="Enter Group Name" required />
-      <br />
-      <label for="group-id">Group ID:</label>
-      <input type="text" id="group-id" placeholder="Enter Group ID" required />
-      <br />
-      <button type="submit">Create Group</button>
-    </form>
-  </section>
+  <div id="groupContainer" style="display: none;">
+    <h2>Create a Group</h2>
+    <input type="text" id="groupName" placeholder="Group Name" />
+    <button onclick="createGroup()">Create Group</button>
+    <div id="groupList"></div>
+  </div>
 
-  <!-- Group List -->
-  <section>
-    <h2>Your Groups</h2>
-    <ul id="group-list">
-      <!-- Groups will be dynamically inserted here -->
-    </ul>
-  </section>
+  <div id="chatContainer" style="display: none;">
+    <h2>Group Chat</h2>
+    <div id="messages"></div>
+    <input type="text" id="messageInput" placeholder="Enter your message" />
+    <button onclick="sendMessage()">Send Message</button>
+  </div>
 
   <script src="script.js"></script>
 </body>
