@@ -7,17 +7,31 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Signup Section (Now removed since we're using mock data) -->
-  <!-- You can skip this section entirely for now -->
+  <header>
+    <h1>Welcome to SyncSpace</h1>
+    <p>Your collaborative study platform</p>
+  </header>
 
-  <!-- Get Started Section -->
-  <div id="group-section" style="display: none;">
-    <h2>Your Groups</h2>
-    <!-- Group data will be populated here after fetching -->
-  </div>
+  <main>
+    <!-- Create Group Section -->
+    <section id="create-group-section">
+      <h2>Create a Group</h2>
+      <input type="text" id="group-name" placeholder="Enter group name" required>
+      <button id="create-group-btn">Create Group</button>
+      <p id="create-group-message"></p>
+    </section>
 
-  <!-- Button to start (Get Started) -->
-  <button id="get-started-btn">Get Started</button>
+    <!-- Group Space Section -->
+    <section id="group-space-section" style="display: none;">
+      <h2>Group Space</h2>
+      <p id="group-name-display"></p>
+      <div id="group-functions">
+        <button id="chat-btn">Chat</button>
+        <button id="tasks-btn">Tasks</button>
+        <button id="files-btn">Files</button>
+      </div>
+    </section>
+  </main>
 
   <script src="index.js"></script>
 </body>
